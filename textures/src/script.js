@@ -1,37 +1,45 @@
-import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import gsap from "gsap";
-import * as dat from "dat.gui";
-
-const parameters = {
-  color: 0xff0000,
-  spin: () => {
-    gsap.to(mesh.rotation, {
-      duration: 1,
-      x: mesh.rotation.x + Math.PI * 2 * 3,
-      y: mesh.rotation.y + Math.PI * 2 * 3,
-    });
-  },
-};
-
-const gui = new dat.GUI();
-
-const actionsFolder = gui.addFolder("Cube Actions");
-actionsFolder.open();
-actionsFolder.add(parameters, "spin").name("Spin");
 
 /**
- * We have ranges, colors, texts, checkboxes, selects, buttons and folders
- * Classes:
- *  - Range
- *  - Color
- *  - Text
- *  - Checkbox
- *  - Select
- *  - Button
- *  - Folder
+ * Textures
  */
+const loadingManager = new THREE.LoadingManager();
+
+loadingManager.onStart = () => {
+  console.log("onStart");
+};
+
+loadingManager.onLoad = () => {
+  console.log("onLoad");
+};
+
+loadingManager.onProgress = () => {
+  console.log("onProgress");
+};
+
+loadingManager.onError = () => {
+  console.log("onError");
+};
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const colorTexture = textureLoader.load("/textures/minecraft.png");
+
+// Transforming textures
+// colorTexture.repeat.x = 2;
+// colorTexture.repeat.y = 3;
+// colorTexture.wrapS = THREE.RepeatWrapping;
+// colorTexture.wrapT = THREE.RepeatWrapping;
+// colorTexture.offset.x = 0.5;
+// colorTexture.offset.y = 0.5;
+// colorTexture.rotation = Math.PI / 4;
+// colorTexture.center.x = 0.5;
+// colorTexture.center.y = 0.5;
+
+// Mipmapping and filtering
+colorTexture.minFilter = THREE.NearestFilter;
+colorTexture.magFilter = THREE.NearestFilter;
+colorTexture.generateMipmaps = false;
 
 /**
  * Base
@@ -46,45 +54,9 @@ const scene = new THREE.Scene();
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: parameters.color });
+const material = new THREE.MeshBasicMaterial({ map: colorTexture });
 const mesh = new THREE.Mesh(geometry, material);
-
 scene.add(mesh);
-
-// Debug
-const cubePosFolder = gui.addFolder("Cube Position");
-
-cubePosFolder.open();
-cubePosFolder
-  .add(mesh.position, "x")
-  .min(-10)
-  .max(10)
-  .step(0.01)
-  .name("Cube X");
-cubePosFolder
-  .add(mesh.position, "y")
-  .min(-10)
-  .max(10)
-  .step(0.01)
-  .name("Cube Y");
-cubePosFolder
-  .add(mesh.position, "z")
-  .min(-10)
-  .max(10)
-  .step(0.01)
-  .name("Cube Z");
-
-const cubeVisibilityFolder = gui.addFolder("Cube Visibility");
-
-cubeVisibilityFolder.open();
-cubeVisibilityFolder.add(mesh, "visible").name("Is Visible");
-cubeVisibilityFolder.add(material, "wireframe").name("Show Wireframe");
-cubeVisibilityFolder
-  .addColor(parameters, "color")
-  .name("Cube Color")
-  .onChange(() => {
-    material.color.set(parameters.color);
-  });
 
 /**
  * Sizes
@@ -118,7 +90,9 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.z = 3;
+camera.position.x = 1;
+camera.position.y = 1;
+camera.position.z = 1;
 scene.add(camera);
 
 // Controls
