@@ -48,9 +48,9 @@ const particlesMaterial = new THREE.PointsMaterial({
   // alphaMap: particleTexture,
   // alphaTest: 0.01,
   // depthTest: false,
-  // depthWrite: false,
+  depthWrite: false,
   transparent: true,
-  // blending: THREE.AdditiveBlending,
+  blending: THREE.AdditiveBlending,
   // vertexColors: true,
 });
 
@@ -123,11 +123,8 @@ const tick = () => {
     const yi = i3 + 1;
     const zi = i3 + 2;
 
-    particlesGeometry.attributes.position.array[yi] = Math.min(
-      Math.sin(
-        elapsedTime + particlesGeometry.attributes.position.array[xi] * 2
-      ),
-      Math.PI * 0.02
+    particlesGeometry.attributes.position.array[yi] = Math.sin(
+      elapsedTime + particlesGeometry.attributes.position.array[zi]
     );
 
     particlesGeometry.attributes.position.array[yi] += Math.min(
@@ -136,6 +133,8 @@ const tick = () => {
       ),
       Math.PI * 0.02
     );
+
+    particlesGeometry.attributes.position.array[yi] = +Math.tan(elapsedTime);
   }
 
   particlesGeometry.attributes.position.needsUpdate = true;
